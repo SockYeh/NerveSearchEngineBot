@@ -1,12 +1,11 @@
-from os import link
-import discord, json, requests, re, urllib.parse
+import discord, requests, re, urllib.parse, os
 from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
 from discord.ext import commands
 
-
 token = ''
-bot = commands.Bot(command_prefix="-", case_insensitive=True)
+bot = commands.Bot(command_prefix="-", case_insensitive=True, intents=discord.Intents.all())
+
 ua = UserAgent()
 bot.remove_command("help")
 
@@ -15,7 +14,7 @@ bot.remove_command("help")
 async def on_ready():
     print("Bot is ready.")
     await bot.change_presence(
-        activity=discord.Game(name=f"Searching stuff in {len(bot.guilds)} servers!")
+        activity=discord.Game(name=f"Searching stuff for {len(bot.users)} users in {len(bot.guilds)} servers!")
     )
 
 
@@ -223,7 +222,7 @@ async def stackof(ctx, *, query):
     query = urllib.parse.quote_plus(query)
 
     r = requests.get(
-        f"https://google.com/search?q=inurl:stackoverflow.com+python+OR+site:stackoverflow.com+{query}",
+        f"https://google.com/search?q=inurl:stackoverflow.com+{query}+OR+site:stackoverflow.com+{query}",
         headers={"User-Agent": ua.chrome},
     )
     soup = BeautifulSoup(r.text, "html.parser")
@@ -319,6 +318,23 @@ async def github(ctx, *, query):
             continue
     await ctx.send(embed=embed)
 
+@bot.command()
+async def vote(ctx):
+  embed = discord.Embed(title='Vote', description='You can vote for me [here](https://top.gg/bot/857523507709214750/vote).', color=0xffa500)
+  embed.set_footer(
+        text=f"Command Invoked By {ctx.author} - Made by SockYeh#0001",
+        icon_url=ctx.author.avatar_url,
+    )
+  await ctx.channel.send(embed=embed)
+
+@bot.command(aliases=['source_code','src'])
+async def sourcecode(ctx):
+  embed = discord.Embed(title='Source Code', description='You can find my source code [here](https://github.com/SockYeh/NerveSearchEngineBot/).', color=0xffa500)
+  embed.set_footer(
+        text=f"Command Invoked By {ctx.author} - Made by SockYeh#0001",
+        icon_url=ctx.author.avatar_url,
+    )
+  await ctx.channel.send(embed=embed)
 
 @bot.command()
 async def help(ctx):
@@ -373,11 +389,23 @@ async def help(ctx):
         inline=False,
     )
     embed.add_field(
+        name="vote",
+        value="Shows vote page",
+        inline=False,
+    )
+    embed.add_field(
+        name="sourcecode",
+        value="Shows github repository",
+        inline=False,
+    )
+    embed.add_field(
         name="help",
         value="Shows this message",
         inline=False,
     )
+    
     await ctx.send(embed=embed)
 
+  
 
 bot.run(token)
