@@ -3,7 +3,7 @@ from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
 from discord.ext import commands
 
-token = ''
+token = ""
 bot = commands.Bot(command_prefix="-", case_insensitive=True, intents=discord.Intents.all())
 
 ua = UserAgent()
@@ -36,7 +36,7 @@ async def ping(ctx):
 async def invite(ctx):
     embed = discord.Embed(
         title="Invite Me!",
-        description="You can invite me [here](https://discord.com/api/oauth2/authorize?client_id=857523507709214750&permissions=8&scope=bot).",
+        description="You can invite me [here](https://discord.com/api/oauth2/authorize?client_id=&permissions=8&scope=bot).",
         color=0xFFA500,
     )
     embed.set_footer(
@@ -67,6 +67,35 @@ async def google(ctx, *, query):
         result = result.get("href")
         if "/url?q=" in result:
             result = result.replace("/url?q=", "")
+            
+
+            result = result.split('&')[0]
+            
+
+            result = result.replace('%3F', '?')
+            
+
+            result = result.replace('%3D', '=')
+            
+
+            result = result.replace('%26', '&')
+            
+
+            result = result.replace('%2F', '/')
+            
+
+            result = result.replace('%3A', ':')
+            
+
+            result = result.replace('%2B', '+')
+            
+            
+            result = result.replace('%2C', ',')
+            
+            result = result.replace('%3B', ';')
+            
+            result = result.replace('%2E', '.')
+            
             looped += 1
             embed.add_field(
                 name=str(looped),
@@ -239,6 +268,16 @@ async def stackof(ctx, *, query):
             if "stackoverflow.com/questions" in link:
                 link = link.replace("/url?q=", "").split("&")[0]
                 name = link.split("/")[5].replace("-", " ")
+                link = link.replace('%3F', '?')
+                link = link.replace('%3D', '=')
+                link = link.replace('%26', '&')
+                link = link.replace('%2F', '/')
+                link = link.replace('%3A', ':')
+                link = link.replace('%2B', '+')
+                link = link.replace('%2C', ',')
+                link = link.replace('%3B', ';')
+                link = link.replace('%2E', '.')
+                print(link)
                 looped += 1
                 embed.add_field(
                     name=str(looped),
@@ -318,23 +357,6 @@ async def github(ctx, *, query):
             continue
     await ctx.send(embed=embed)
 
-@bot.command()
-async def vote(ctx):
-  embed = discord.Embed(title='Vote', description='You can vote for me [here](https://top.gg/bot/857523507709214750/vote).', color=0xffa500)
-  embed.set_footer(
-        text=f"Command Invoked By {ctx.author} - Made by SockYeh#0001",
-        icon_url=ctx.author.avatar_url,
-    )
-  await ctx.channel.send(embed=embed)
-
-@bot.command(aliases=['source_code','src'])
-async def sourcecode(ctx):
-  embed = discord.Embed(title='Source Code', description='You can find my source code [here](https://github.com/SockYeh/NerveSearchEngineBot/).', color=0xffa500)
-  embed.set_footer(
-        text=f"Command Invoked By {ctx.author} - Made by SockYeh#0001",
-        icon_url=ctx.author.avatar_url,
-    )
-  await ctx.channel.send(embed=embed)
 
 @bot.command()
 async def help(ctx):
@@ -406,6 +428,5 @@ async def help(ctx):
     
     await ctx.send(embed=embed)
 
-  
 
 bot.run(token)
